@@ -1,0 +1,39 @@
+name: Deploy Flask API with Docker on Apache
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+    - name: Copy files to VPS
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p ~/vraj_marketing_rag_api"
+        scp -r . ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:~/vraj_marketing_rag_api
+
+    - name: Build & Run Docker container
+      run: |
+        ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+        cd ~/vraj_marketing_rag_api
+        docker stop vraj_marketing_rag_api || true
+        docker rm vraj_marketing_rag_api || true
+        docker build -t vraj_marketing_rag_api .
+        docker run -d -p 5002:5000 --name vraj_marketing_rag_api \
+          -e GROQ_API_KEY="${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}" \
+          -e API_AUTH_TOKEN="${secret-token-123}" \
+          vraj_marketing_rag_api
+        EOF
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
