@@ -29,7 +29,7 @@ jobs:
         docker stop vraj_marketing_rag_api || true
         docker rm vraj_marketing_rag_api || true
         docker build -t vraj_marketing_rag_api .
-        docker run -d -p 5002:5000 --name vraj_marketing_rag_api \
+        docker run -d -p 5001:5000 --name vraj_marketing_rag_api \
           -e GROQ_API_KEY="${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}" \
           -e API_AUTH_TOKEN="${secret-token-123}" \
           vraj_marketing_rag_api
