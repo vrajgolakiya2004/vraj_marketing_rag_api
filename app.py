@@ -37,6 +37,13 @@ def token_required(f):
     
     return decorated
 
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "message": "API is running"
+    })
+
 @app.route('/api/answer', methods=['POST'])
 @token_required  # Add this decorator to protect the endpoint
 def get_answer():
