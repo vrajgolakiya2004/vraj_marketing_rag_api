@@ -22,18 +22,18 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p ~/vraj_marketing_rag_api"
         scp -r . ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:~/vraj_marketing_rag_api
 
-- name: Build & Run Docker container
-  run: |
-    ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
-    cd ~/vraj_marketing_rag_api
-    docker stop vraj_marketing_rag_api || true
-    docker rm vraj_marketing_rag_api || true
-    docker build -t vraj_marketing_rag_api .
-    docker run -d -p 5001:5000 --name vraj_marketing_rag_api \
-      -e GROQ_API_KEY="${GROQ_API_KEY}" \
-      -e API_AUTH_TOKEN="${API_AUTH_TOKEN}" \
-      vraj_marketing_rag_api
-    EOF
-  env:
-    GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-    API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+    - name: Build & Run Docker container
+      run: |
+        ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+        cd ~/vraj_marketing_rag_api
+        docker stop vraj_marketing_rag_api || true
+        docker rm vraj_marketing_rag_api || true
+        docker build -t vraj_marketing_rag_api .
+        docker run -d -p 5001:5000 --name vraj_marketing_rag_api \
+          -e GROQ_API_KEY="${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}" \
+          -e API_AUTH_TOKEN="${secret-token-123}" \
+          vraj_marketing_rag_api
+        EOF
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
