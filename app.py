@@ -10,31 +10,29 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Get the expected token from environment variables
-API_AUTH_TOKEN = os.getenv("API_AUTH_TOKEN")
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        
-        # Check if Authorization header is present
+
+        # Get the Authorization header
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
             try:
-                # Expecting "Bearer <token>"
                 token = auth_header.split(" ")[1]
             except IndexError:
                 return jsonify({"error": "Bearer token malformed"}), 401
-        
+
         if not token:
             return jsonify({"error": "Authorization token is missing"}), 401
-        
-        if token != API_AUTH_TOKEN:
+
+        # ✅ Load token at runtime to ensure environment is ready
+        expected_token = os.getenv("API_AUTH_TOKEN")
+        if token != expected_token:
             return jsonify({"error": "Invalid authorization token"}), 401
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated
 
 @app.route('/api/health', methods=['GET'])
