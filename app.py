@@ -35,7 +35,7 @@ def token_required(f):
 
     return decorated
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/', methods=['GET'])
 def health_check():
     return jsonify({
         "status": "healthy",
