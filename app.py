@@ -4,8 +4,9 @@ import os
 from dotenv import load_dotenv
 from functools import wraps
 
-print("Vraj")
-# Load environment variables
+print("Hello")
+
+
 load_dotenv()
 
 app = Flask(__name__)
